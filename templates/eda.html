@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDA – Exploratory Data Analysis | Smart Lender</title>
+  <meta name="description" content="Interactive exploratory data analysis with univariate, bivariate, and multivariate charts for the Smart Lender loan dataset.">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f7f9fb; color: #191c1e; }
+
+    .glass      { background: rgba(255,255,255,0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 8px 32px rgba(99,14,212,0.06); }
+    .glass-card { background: rgba(255,255,255,0.78); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 8px 32px rgba(99,14,212,0.08); }
+
+    .hero-bg { background: linear-gradient(135deg, #630ed4 0%, #9e41f5 55%, #ff6b00 100%); }
+
+    /* Tabs */
+    .tab-btn { transition: all 0.25s ease; }
+    .tab-btn.active { background: #630ed4; color: #fff; box-shadow: 0 4px 20px rgba(99,14,212,0.35); }
+    .tab-btn:not(.active):hover { background: rgba(99,14,212,0.08); }
+
+    /* Panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeSlide 0.4s ease; }
+    @keyframes fadeSlide { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Chart cards */
+    .chart-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .chart-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(99,14,212,0.14); }
+    .chart-img { transition: transform 0.5s ease; cursor: zoom-in; }
+    .chart-img:hover { transform: scale(1.04); }
+
+    /* Badges */
+    .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; padding: 3px 9px; border-radius: 99px; }
+    .badge-uni   { background: rgba(99,14,212,0.12);  color: #630ed4; }
+    .badge-bi    { background: rgba(255,107,0,0.12);  color: #cc5500; }
+    .badge-multi { background: rgba(0,200,83,0.12);   color: #007a33; }
+
+    /* Insights */
+    .insight { background: linear-gradient(135deg,rgba(99,14,212,0.06),rgba(158,65,245,0.06)); border: 1px solid rgba(99,14,212,0.13); border-radius: 12px; padding: 10px 14px; font-size: 12.5px; color: #4a4455; line-height: 1.55; }
+    .insight span { color: #630ed4; font-weight: 600; }
+
+    /* Lightbox */
+    #lightbox { backdrop-filter: blur(12px); }
+
+    /* Stagger */
+    .stagger { opacity:0; transform:translateY(18px); animation: fadeSlide 0.5s ease forwards; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NavBar -->
+  <nav class="fixed top-0 w-full z-50 bg-white/60 backdrop-blur-xl border-b border-white/40 shadow-[0_4px_24px_rgba(99,14,212,0.07)] h-20">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="location.href='/'">
+        <span class="material-symbols-outlined text-3xl" style="color:#630ed4;font-variation-settings:'FILL' 1">analytics</span>
+        <span style="color:#630ed4" class="text-xl font-extrabold">Smart Lender</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/"          class="text-sm font-medium text-gray-500 hover:text-purple-700 transition-colors">Home</a>
+        <a href="/dashboard" class="text-sm font-medium text-gray-500 hover:text-purple-700 transition-colors">Dashboard</a>
+        <a href="/eda"       class="text-sm font-bold border-b-2 pb-0.5" style="color:#630ed4;border-color:#630ed4">EDA</a>
+      </div>
+      <a href="/eligibility" class="text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg transition-colors" style="background:#630ed4">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-bg pt-36 pb-20 px-6 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background:repeating-linear-gradient(45deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 1px,transparent 0,transparent 50%);background-size:20px 20px;"></div>
+    <div class="relative max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.28)">
+        <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings:'FILL' 1">bar_chart</span>
+        <span class="text-white text-xs font-semibold uppercase tracking-widest">Exploratory Data Analysis</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+        Deep-Dive into<br>Loan Portfolio Data
+      </h1>
+      <p class="text-lg max-w-xl mx-auto leading-relaxed" style="color:rgba(255,255,255,0.8)">
+        23 interactive charts exploring distributions, relationships, and cross-feature patterns across 614 loan records.
+      </p>
+
+      <!-- Stats row -->
+      <div class="flex flex-wrap justify-center gap-4 mt-10">
+        <div class="glass rounded-2xl px-6 py-3 text-white text-center"><p class="text-2xl font-extrabold">11</p><p class="text-xs mt-0.5 opacity-70">Univariate</p></div>
+        <div class="glass rounded-2xl px-6 py-3 text-white text-center"><p class="text-2xl font-extrabold">8</p><p class="text-xs mt-0.5 opacity-70">Bivariate</p></div>
+        <div class="glass rounded-2xl px-6 py-3 text-white text-center"><p class="text-2xl font-extrabold">4</p><p class="text-xs mt-0.5 opacity-70">Multivariate</p></div>
+        <div class="glass rounded-2xl px-6 py-3 text-white text-center"><p class="text-2xl font-extrabold">614</p><p class="text-xs mt-0.5 opacity-70">Records</p></div>
+        <div class="glass rounded-2xl px-6 py-3 text-white text-center"><p class="text-2xl font-extrabold">11</p><p class="text-xs mt-0.5 opacity-70">Features</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab Bar -->
+  <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-3 flex items-center gap-3 overflow-x-auto">
+      <button id="tab-uni"   onclick="switchTab('uni')"   class="tab-btn active flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border border-gray-200 whitespace-nowrap">
+        <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1">bar_chart_4_bars</span> Univariate
+      </button>
+      <button id="tab-bi"    onclick="switchTab('bi')"    class="tab-btn flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border border-gray-200 text-gray-500 whitespace-nowrap">
+        <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1">scatter_plot</span> Bivariate
+      </button>
+      <button id="tab-multi" onclick="switchTab('multi')" class="tab-btn flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border border-gray-200 text-gray-500 whitespace-nowrap">
+        <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1">hub</span> Multivariate
+      </button>
+      <div class="ml-auto hidden md:flex items-center gap-3 text-xs text-gray-500">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> Approved</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-red-600  inline-block"></span> Rejected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-6 md:px-12 py-14">
+
+    <!-- ═══════════════ UNIVARIATE ═══════════════ -->
+    <div id="panel-uni" class="tab-panel active">
+
+      <!-- Intro card -->
+      <div class="glass-card rounded-3xl p-8 mb-10 flex flex-col md:flex-row items-start gap-6">
+        <div class="rounded-2xl p-4 flex-shrink-0" style="background:rgba(99,14,212,0.1)">
+          <span class="material-symbols-outlined text-4xl" style="color:#630ed4;font-variation-settings:'FILL' 1">bar_chart_4_bars</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <h2 class="text-2xl font-bold">Univariate Analysis</h2>
+            <span class="badge badge-uni">1 Variable</span>
+          </div>
+          <p class="text-gray-500 leading-relaxed">
+            Examines <span class="font-semibold" style="color:#630ed4">each feature in isolation</span> to reveal its distribution shape, central tendency, spread, and skewness. Histograms are used for continuous variables; bar charts for categorical frequencies.
+          </p>
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="insight">📊 <span>Histograms + KDE</span> for numerical features</div>
+            <div class="insight">🔢 <span>Bar charts</span> for categorical features</div>
+            <div class="insight">📐 Reveals <span>skewness, outliers</span> &amp; imbalance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Numerical -->
+      <h3 class="text-base font-bold mb-5 flex items-center gap-2">
+        <span class="w-1 h-5 rounded-full inline-block" style="background:#630ed4"></span> Continuous / Numerical Features
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.05s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Applicant Income</p><p class="text-xs text-gray-400 mt-0.5">Highly right-skewed</p></div>
+            <span class="badge badge-uni">Numerical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/univariate/uni_applicant_income.png" onclick="openLightbox(this.src,'Applicant Income Distribution')" alt="Applicant Income">
+          </div>
+          <p class="insight mt-3">Most applicants earn <span>2,000–6,000</span> with a long right tail of high-income outliers.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.10s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Co-applicant Income</p><p class="text-xs text-gray-400 mt-0.5">Zero-heavy, right-skewed</p></div>
+            <span class="badge badge-uni">Numerical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/univariate/uni_coapplicant_income.png" onclick="openLightbox(this.src,'Co-applicant Income Distribution')" alt="Co-applicant Income">
+          </div>
+          <p class="insight mt-3">A large spike at <span>₹ 0</span> indicates many single applicants — no co-borrower income.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.15s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Loan Amount</p><p class="text-xs text-gray-400 mt-0.5">Moderately right-skewed</p></div>
+            <span class="badge badge-uni">Numerical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/univariate/uni_loan_amount.png" onclick="openLightbox(this.src,'Loan Amount Distribution')" alt="Loan Amount">
+          </div>
+          <p class="insight mt-3">Loans peak around <span>₹ 100k–200k</span>; a small group requests much larger sums.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.20s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Loan Amount Term</p><p class="text-xs text-gray-400 mt-0.5">Dominant 360-month preference</p></div>
+            <span class="badge badge-uni">Numerical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/univariate/uni_loan_term.png" onclick="openLightbox(this.src,'Loan Term Distribution')" alt="Loan Term">
+          </div>
+          <p class="insight mt-3">Over <span>80%</span> of applicants opt for the standard 30-year (360-month) term.</p>
+        </div>
+
+      </div>
+
+      <!-- Categorical -->
+      <h3 class="text-base font-bold mb-5 flex items-center gap-2">
+        <span class="w-1 h-5 rounded-full inline-block" style="background:#9e41f5"></span> Categorical Features
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.25s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Gender</p><p class="text-xs text-gray-400 mt-0.5">Male-dominant portfolio</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_gender.png" onclick="openLightbox(this.src,'Gender Distribution')" alt="Gender">
+          </div>
+          <p class="insight mt-3"><span>~80%</span> of applicants are male — reflective of historical banking demographics.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.30s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Marital Status</p><p class="text-xs text-gray-400 mt-0.5">Majority are married</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_married.png" onclick="openLightbox(this.src,'Marital Status Distribution')" alt="Married">
+          </div>
+          <p class="insight mt-3">Around <span>65%</span> are married, often correlated with dual-income stability.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.35s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Education</p><p class="text-xs text-gray-400 mt-0.5">Graduate-dominant applicant pool</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_education.png" onclick="openLightbox(this.src,'Education Distribution')" alt="Education">
+          </div>
+          <p class="insight mt-3"><span>~78%</span> are graduates — higher education links to better income reliability.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.40s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Self Employed</p><p class="text-xs text-gray-400 mt-0.5">Salaried applicants dominate</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_self_employed.png" onclick="openLightbox(this.src,'Self-Employed Distribution')" alt="Self Employed">
+          </div>
+          <p class="insight mt-3">Only <span>~14%</span> are self-employed; salaried income is viewed as lower risk.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.45s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Dependents</p><p class="text-xs text-gray-400 mt-0.5">Most have 0 dependents</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_dependents.png" onclick="openLightbox(this.src,'Dependents Distribution')" alt="Dependents">
+          </div>
+          <p class="insight mt-3">More dependents = higher financial liability = slightly lower approval odds.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.50s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Property Area</p><p class="text-xs text-gray-400 mt-0.5">Balanced across three regions</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_property_area.png" onclick="openLightbox(this.src,'Property Area Distribution')" alt="Property Area">
+          </div>
+          <p class="insight mt-3">Semiurban applicants have the <span>highest approval rate</span> among all three areas.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.55s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Credit History</p><p class="text-xs text-gray-400 mt-0.5">Strong class imbalance</p></div>
+            <span class="badge badge-uni">Categorical</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-48 object-contain" src="/static/images/charts/univariate/uni_credit_history.png" onclick="openLightbox(this.src,'Credit History Distribution')" alt="Credit History">
+          </div>
+          <p class="insight mt-3">Credit history is the <span>most predictive feature</span> — good history yields ~80%+ approval.</p>
+        </div>
+
+      </div>
+    </div><!-- /panel-uni -->
+
+    <!-- ═══════════════ BIVARIATE ═══════════════ -->
+    <div id="panel-bi" class="tab-panel">
+
+      <!-- Intro card -->
+      <div class="glass-card rounded-3xl p-8 mb-10 flex flex-col md:flex-row items-start gap-6">
+        <div class="rounded-2xl p-4 flex-shrink-0 bg-orange-100">
+          <span class="material-symbols-outlined text-4xl text-orange-600" style="font-variation-settings:'FILL' 1">scatter_plot</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <h2 class="text-2xl font-bold">Bivariate Analysis</h2>
+            <span class="badge badge-bi">2 Variables</span>
+          </div>
+          <p class="text-gray-500 leading-relaxed">
+            Explores the <span class="font-semibold text-orange-600">relationship between two variables</span> — particularly each feature against Loan_Status — to reveal which predictors most strongly drive approval or rejection.
+          </p>
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="insight">📦 <span>Box plots</span> compare medians &amp; spread by loan status</div>
+            <div class="insight">🎻 <span>Violin plots</span> show full distribution shape by group</div>
+            <div class="insight">🔵 <span>Scatter plots</span> reveal correlation between two continuous features</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Numerical vs Target -->
+      <h3 class="text-base font-bold mb-5 flex items-center gap-2">
+        <span class="w-1 h-5 rounded-full inline-block bg-orange-500"></span> Numerical Features vs Loan Status
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.05s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Income vs Loan Amount (Scatter)</p><p class="text-xs text-gray-400 mt-0.5">Coloured by Loan Status</p></div>
+            <span class="badge badge-bi">Scatter</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-56 object-contain" src="/static/images/charts/bivariate/bi_income_vs_loan.png" onclick="openLightbox(this.src,'Applicant Income vs Loan Amount by Status')" alt="Income vs Loan">
+          </div>
+          <p class="insight mt-3">No perfect linear cut, but <span>higher-income applicants</span> tend to request larger loans and get approved.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.10s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Loan Amount by Status (Box Plot)</p><p class="text-xs text-gray-400 mt-0.5">Median &amp; IQR comparison</p></div>
+            <span class="badge badge-bi">Box Plot</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-56 object-contain" src="/static/images/charts/bivariate/bi_loan_amount_status.png" onclick="openLightbox(this.src,'Loan Amount by Loan Status')" alt="Loan Amount by Status">
+          </div>
+          <p class="insight mt-3">Approved loans have a <span>slightly lower median</span> — modest loan requests fare better.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.15s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Applicant Income by Status (Box Plot)</p><p class="text-xs text-gray-400 mt-0.5">Income distribution split</p></div>
+            <span class="badge badge-bi">Box Plot</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-56 object-contain" src="/static/images/charts/bivariate/bi_income_status.png" onclick="openLightbox(this.src,'Applicant Income by Loan Status')" alt="Income by Status">
+          </div>
+          <p class="insight mt-3">Approved applicants show a <span>higher median income</span>, but distributions overlap significantly.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.20s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Co-applicant Income by Status (Violin)</p><p class="text-xs text-gray-400 mt-0.5">Full distribution shape</p></div>
+            <span class="badge badge-bi">Violin</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-56 object-contain" src="/static/images/charts/bivariate/bi_coapplicant_status.png" onclick="openLightbox(this.src,'Co-applicant Income by Loan Status')" alt="Coapplicant by Status">
+          </div>
+          <p class="insight mt-3">Most applicants have <span>₹ 0 co-applicant income</span> regardless of outcome — weak predictor alone.</p>
+        </div>
+
+      </div>
+
+      <!-- Categorical vs Target -->
+      <h3 class="text-base font-bold mb-5 flex items-center gap-2">
+        <span class="w-1 h-5 rounded-full inline-block bg-orange-500"></span> Categorical Features vs Loan Status
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.25s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Credit History vs Loan Status</p><p class="text-xs text-gray-400 mt-0.5">Strongest individual predictor</p></div>
+            <span class="badge badge-bi">Grouped Bar</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/bivariate/bi_credit_status.png" onclick="openLightbox(this.src,'Credit History vs Loan Status')" alt="Credit vs Status">
+          </div>
+          <p class="insight mt-3">Good credit (1) applicants are approved at <span>~80%</span>; bad credit leads to near-certain rejection.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.30s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Education vs Loan Status</p><p class="text-xs text-gray-400 mt-0.5">Graduate advantage</p></div>
+            <span class="badge badge-bi">Grouped Bar</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/bivariate/bi_education_status.png" onclick="openLightbox(this.src,'Education vs Loan Status')" alt="Education vs Status">
+          </div>
+          <p class="insight mt-3">Graduates have a <span>higher approval-to-rejection ratio</span> — education signals income stability.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.35s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Marital Status vs Loan Status</p><p class="text-xs text-gray-400 mt-0.5">Married applicants favoured</p></div>
+            <span class="badge badge-bi">Grouped Bar</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/bivariate/bi_married_status.png" onclick="openLightbox(this.src,'Marital Status vs Loan Status')" alt="Married vs Status">
+          </div>
+          <p class="insight mt-3">Married applicants show a <span>higher approval proportion</span>, likely due to combined household income.</p>
+        </div>
+
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.40s">
+          <div class="flex items-start justify-between mb-3">
+            <div><p class="font-semibold text-sm">Dependents vs Loan Status</p><p class="text-xs text-gray-400 mt-0.5">Approval declines with dependents</p></div>
+            <span class="badge badge-bi">Grouped Bar</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-52 object-contain" src="/static/images/charts/bivariate/bi_dependents_status.png" onclick="openLightbox(this.src,'Dependents vs Loan Status')" alt="Dependents vs Status">
+          </div>
+          <p class="insight mt-3">Approval rate <span>declines slightly</span> as dependents increase — higher financial liability reduces eligibility.</p>
+        </div>
+
+      </div>
+    </div><!-- /panel-bi -->
+
+    <!-- ═══════════════ MULTIVARIATE ═══════════════ -->
+    <div id="panel-multi" class="tab-panel">
+
+      <!-- Intro card -->
+      <div class="glass-card rounded-3xl p-8 mb-10 flex flex-col md:flex-row items-start gap-6">
+        <div class="rounded-2xl p-4 flex-shrink-0 bg-green-100">
+          <span class="material-symbols-outlined text-4xl text-green-700" style="font-variation-settings:'FILL' 1">hub</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <h2 class="text-2xl font-bold">Multivariate Analysis</h2>
+            <span class="badge badge-multi">3+ Variables</span>
+          </div>
+          <p class="text-gray-500 leading-relaxed">
+            Uncovers <span class="font-semibold text-green-700">complex interactions</span> among three or more features simultaneously — exposing conditional patterns that are invisible in single-variable or two-variable views.
+          </p>
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="insight">🔗 <span>Pairplot</span> — all pairwise relationships at once</div>
+            <div class="insight">🗺️ <span>Approval heatmap</span> — rate by two categorical dimensions</div>
+            <div class="insight">🌐 <span>3-way scatter</span> — encodes area, status &amp; income together</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Pairplot spans full width -->
+        <div class="glass-card chart-card rounded-3xl p-5 md:col-span-2 stagger" style="animation-delay:0.05s">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <p class="font-semibold text-sm">Pairplot — All Numerical Features × Loan Status</p>
+              <p class="text-xs text-gray-400 mt-0.5">Every pairwise scatter + KDE diagonals, coloured by approval outcome</p>
+            </div>
+            <span class="badge badge-multi">Pairplot</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto object-contain" src="/static/images/charts/multivariate/multi_pairplot.png" onclick="openLightbox(this.src,'Pairplot of Numerical Features by Loan Status')" alt="Pairplot">
+          </div>
+          <p class="insight mt-3">Diagonal KDE plots reveal distribution differences by status. <span>Loan Amount</span> and <span>Applicant Income</span> show slight but consistent separation between approved and rejected groups.</p>
+        </div>
+
+        <!-- 3-way scatter -->
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.10s">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <p class="font-semibold text-sm">Income × Loan Amount × Property Area × Status</p>
+              <p class="text-xs text-gray-400 mt-0.5">Shape = Loan Status &nbsp;|&nbsp; Colour = Property Area</p>
+            </div>
+            <span class="badge badge-multi">3-way Scatter</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-72 object-contain" src="/static/images/charts/multivariate/multi_income_loan_area.png" onclick="openLightbox(this.src,'Income vs Loan Amount × Property Area × Status')" alt="3-way scatter">
+          </div>
+          <p class="insight mt-3"><span>Semiurban approved applicants</span> cluster at moderate income-loan ranges, confirming their historically higher approval rate across the dataset.</p>
+        </div>
+
+        <!-- Stacked bar -->
+        <div class="glass-card chart-card rounded-3xl p-5 stagger" style="animation-delay:0.15s">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <p class="font-semibold text-sm">Education × Marital Status × Loan Status</p>
+              <p class="text-xs text-gray-400 mt-0.5">Stacked bar — combined categorical interaction</p>
+            </div>
+            <span class="badge badge-multi">Stacked Bar</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-72 object-contain" src="/static/images/charts/multivariate/multi_edu_married_status.png" onclick="openLightbox(this.src,'Education × Marital Status × Loan Status')" alt="Edu x Married x Status">
+          </div>
+          <p class="insight mt-3"><span>Graduate + Married</span> is the combination with the highest absolute approval count — both attributes compound positively on the model score.</p>
+        </div>
+
+        <!-- Approval rate heatmap spans full width -->
+        <div class="glass-card chart-card rounded-3xl p-5 md:col-span-2 stagger" style="animation-delay:0.20s">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <p class="font-semibold text-sm">Approval Rate (%) — Property Area × Education</p>
+              <p class="text-xs text-gray-400 mt-0.5">Conditional approval rate across two categorical dimensions</p>
+            </div>
+            <span class="badge badge-multi">Rate Heatmap</span>
+          </div>
+          <div class="bg-white rounded-2xl p-3 overflow-hidden border border-gray-100">
+            <img class="chart-img w-full h-auto max-h-72 object-contain" src="/static/images/charts/multivariate/multi_approval_rate_heatmap.png" onclick="openLightbox(this.src,'Approval Rate Heatmap: Property Area × Education')" alt="Approval Rate Heatmap">
+          </div>
+          <p class="insight mt-3">The heatmap reveals that <span>Semiurban + Graduate</span> applicants enjoy the highest conditional approval rate, while <span>Rural + Not Graduate</span> profiles face the steepest approval barriers across the entire portfolio.</p>
+        </div>
+
+      </div>
+    </div><!-- /panel-multi -->
+
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-4" style="background:rgba(0,0,0,0.82);backdrop-filter:blur(12px)" onclick="closeLightbox()">
+    <button class="absolute top-5 right-6 text-white text-4xl font-bold hover:text-purple-400 transition-colors leading-none">&times;</button>
+    <h4 id="lb-title" class="text-white font-bold text-lg mb-4 text-center px-8 max-w-2xl"></h4>
+    <img id="lb-img" class="max-w-full max-h-[82vh] object-contain rounded-2xl border border-white/10 shadow-2xl" onclick="event.stopPropagation()" src="" alt="Expanded chart">
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 py-10 mt-12" style="background:#f2f4f6">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-2xl" style="color:#630ed4;font-variation-settings:'FILL' 1">analytics</span>
+        <span class="font-bold" style="color:#630ed4">Smart Lender</span>
+        <span class="text-gray-400 text-sm ml-2">© 2026 Enlightened Finance for Everyone.</span>
+      </div>
+      <div class="flex gap-6 text-sm text-gray-400">
+        <a href="/"           class="hover:text-purple-700 transition-colors">Home</a>
+        <a href="/dashboard"  class="hover:text-purple-700 transition-colors">Dashboard</a>
+        <a href="/eligibility" class="hover:text-purple-700 transition-colors">Apply Now</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(name) {
+      ['uni','bi','multi'].forEach(t => {
+        document.getElementById('tab-'   + t).classList.toggle('active', t === name);
+        document.getElementById('panel-' + t).classList.toggle('active', t === name);
+      });
+      // Re-trigger stagger on newly shown panel
+      document.querySelectorAll('#panel-' + name + ' .stagger').forEach((el, i) => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = `fadeSlide 0.5s ease ${i * 0.05}s forwards`;
+      });
+      window.scrollTo({ top: 148, behavior: 'smooth' });
+    }
+
+    function openLightbox(src, title) {
+      document.getElementById('lb-img').src = src;
+      document.getElementById('lb-title').textContent = title;
+      document.getElementById('lightbox').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+</body>
+</html>

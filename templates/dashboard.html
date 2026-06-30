@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Model Dashboard | Smart Lender</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f2f4f6",
+                        "secondary": "#831ada",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "primary-fixed": "#eaddff",
+                        "inverse-primary": "#d2bbff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-tint": "#732ee4",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed-dim": "#ffb690",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffdecf",
+                        "on-secondary-container": "#fffbff",
+                        "background": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#f0dbff",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-secondary-fixed": "#2c0051",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#aa4900",
+                        "secondary-container": "#9e41f5",
+                        "on-primary-fixed": "#25005a",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#ddb8ff",
+                        "surface-dim": "#d8dadc",
+                        "on-tertiary-fixed": "#341100",
+                        "tertiary-fixed": "#ffdbca",
+                        "on-tertiary-fixed-variant": "#783200",
+                        "primary-container": "#7c3aed",
+                        "on-surface-variant": "#4a4455",
+                        "on-secondary-fixed-variant": "#6800b4",
+                        "outline": "#7b7487",
+                        "on-primary-container": "#ede0ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#d2bbff",
+                        "surface-bright": "#f7f9fb",
+                        "outline-variant": "#ccc3d8",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "tertiary": "#843700",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "primary": "#630ed4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "stack-xl": "64px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            color: #191c1e;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(124, 58, 237, 0.05);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(124, 58, 237, 0.08);
+        }
+
+        .spotlight-card {
+            background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.15) 0%, rgba(255, 255, 255, 0.7) 70%);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            box-shadow: 0 16px 48px 0 rgba(124, 58, 237, 0.15);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 16px 48px 0 rgba(124, 58, 237, 0.15);
+            }
+            50% {
+                box-shadow: 0 16px 64px 8px rgba(124, 58, 237, 0.25);
+            }
+        }
+
+        .spotlight-card {
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        .stagger-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen relative overflow-x-hidden"
+      data-records="{{ total_records }}"
+      data-features="{{ total_features }}"
+      data-approved="{{ approved_loans }}"
+      data-rejected="{{ rejected_loans }}">
+    <!-- TopNavBar -->
+    <nav
+        class="fixed top-0 w-full z-50 bg-white/60 backdrop-blur-xl border-b border-white/40 shadow-[0_8px_32px_0_rgba(124,58,237,0.1)] h-20">
+        <div class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-full">
+            <div class="flex items-center gap-2 group cursor-pointer" onclick="window.location.href='/'">
+                <span class="material-symbols-outlined text-primary text-3xl"
+                    style="font-variation-settings: 'FILL' 1;">analytics</span>
+                <span class="font-headline-sm text-headline-sm font-bold text-primary">Smart Lender</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a class="text-on-surface-variant font-label-md hover:text-primary transition-colors duration-300"
+                    href="/">Home</a>
+                <a class="text-on-surface-variant font-label-md hover:text-primary transition-colors duration-300"
+                    href="/#features">Features</a>
+                <a class="text-primary font-bold border-b-2 border-primary py-1 font-label-md" href="/dashboard">Dashboard</a>
+                <a class="text-on-surface-variant font-label-md hover:text-primary transition-colors duration-300" href="/eda">EDA</a>
+            </div>
+            <a href="/eligibility"
+                class="bg-primary text-on-primary px-6 py-3 rounded-xl font-label-md font-bold active:scale-95 transition-transform shadow-lg shadow-primary/20 flex items-center justify-center text-center">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-stack-xl max-w-container-max mx-auto px-margin-desktop">
+        
+        <!-- Header -->
+        <header class="text-center mb-stack-lg stagger-in" style="animation-delay: 0.1s">
+            <h1 class="font-display-lg text-display-lg text-on-background mb-4">Model Performance & Analytics</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                Explore the machine learning pipeline statistics, trained classification model parameters, and demographic analytics.
+            </p>
+        </header>
+
+        <!-- Section 1: Dataset Statistics -->
+        <section class="mb-stack-xl">
+            <h2 class="font-headline-md text-headline-md text-on-background mb-6 stagger-in" style="animation-delay: 0.15s">Dataset Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="glass p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300 shadow-md stagger-in" style="animation-delay: 0.2s">
+                    <span class="material-symbols-outlined text-primary text-4xl mb-4">database</span>
+                    <div>
+                        <span class="font-display-lg text-display-lg text-on-background font-extrabold" id="stat-records">{{ total_records }}</span>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mt-2">Total Records</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300 shadow-md stagger-in" style="animation-delay: 0.25s">
+                    <span class="material-symbols-outlined text-primary text-4xl mb-4">grid_view</span>
+                    <div>
+                        <span class="font-display-lg text-display-lg text-on-background font-extrabold" id="stat-features">{{ total_features }}</span>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mt-2">Total Features</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300 shadow-md stagger-in" style="animation-delay: 0.3s">
+                    <span class="material-symbols-outlined text-green-600 text-4xl mb-4">check_circle</span>
+                    <div>
+                        <span class="font-display-lg text-display-lg text-green-600 font-extrabold" id="stat-approved">{{ approved_loans }}</span>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mt-2">Approved Loans</p>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="glass p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform duration-300 shadow-md stagger-in" style="animation-delay: 0.35s">
+                    <span class="material-symbols-outlined text-red-600 text-4xl mb-4">cancel</span>
+                    <div>
+                        <span class="font-display-lg text-display-lg text-red-600 font-extrabold" id="stat-rejected">{{ rejected_loans }}</span>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mt-2">Rejected Loans</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Project Overview & Tech Stack -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-stack-xl">
+            <!-- Project Narrative -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between stagger-in" style="animation-delay: 0.4s">
+                <div>
+                    <h3 class="font-headline-sm text-headline-sm text-on-background mb-4">Smart Lender Architecture</h3>
+                    <p class="text-on-surface-variant text-body-md mb-4 leading-relaxed">
+                        <strong>Problem Statement:</strong> Traditional commercial bank credit assessment structures rely heavily on static scoring sheets. These methodologies struggle to process complex, non-linear dependencies among multiple demographic indicators, resulting in long turnaround times and high default risk.
+                    </p>
+                    <p class="text-on-surface-variant text-body-md mb-4 leading-relaxed">
+                        <strong>Objective:</strong> Automate credit evaluations using preprocessed historical portfolios. By cleaning missing entries, encoding categorical dimensions, scaling features, and employing ensemble gradient boosting models, we provide automated decision results along with explainable, localized feature influences.
+                    </p>
+                </div>
+                <div class="pt-6 border-t border-outline-variant/30 flex items-center gap-4">
+                    <span class="material-symbols-outlined text-primary">auto_awesome</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Model Pipeline trains automatically on code deployment.</span>
+                </div>
+            </div>
+
+            <!-- Tech Stack & Workflow -->
+            <div class="glass-card rounded-3xl p-8 stagger-in" style="animation-delay: 0.45s">
+                <h3 class="font-headline-sm text-headline-sm text-on-background mb-4">Technologies & Workflow</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-primary/10 p-2 rounded-xl text-primary font-bold">ML</div>
+                        <div>
+                            <p class="font-label-md text-label-md text-on-background">Python & Scikit-Learn</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Preprocessing (median & mode imputation), feature scaling, and train-test splitting (80/20).</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-primary/10 p-2 rounded-xl text-primary font-bold">XG</div>
+                        <div>
+                            <p class="font-label-md text-label-md text-on-background">XGBoost Ensemble Classifier</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Chosen best model due to its high efficiency and robustness to overfitting in tabular profiles.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-primary/10 p-2 rounded-xl text-primary font-bold">FE</div>
+                        <div>
+                            <p class="font-label-md text-label-md text-on-background">Tailwind CSS & Flask REST</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Modern, premium layout showcasing responsive inputs and asynchronous scanning transitions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Machine Learning Models Performance -->
+        <section class="mb-stack-xl">
+            <h2 class="font-headline-md text-headline-md text-on-background mb-6 stagger-in" style="animation-delay: 0.5s">Model Performance Comparison</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Decision Tree -->
+                <div class="glass-card p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform shadow-md stagger-in" style="animation-delay: 0.55s">
+                    <div>
+                        <h4 class="font-headline-sm text-lg text-on-background mb-2">Decision Tree</h4>
+                        <p class="text-on-surface-variant text-body-md mb-4 text-sm leading-relaxed">Hierarchical splits based on feature purity. Fast but susceptible to high variance.</p>
+                    </div>
+                    <div class="border-t border-outline-variant/30 pt-4 space-y-2 text-sm">
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Train Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['Decision Tree']['train'] * 100) }}</span></div>
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Test Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['Decision Tree']['test'] * 100) }}</span></div>
+                    </div>
+                </div>
+                <!-- Random Forest -->
+                <div class="glass-card p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform shadow-md stagger-in" style="animation-delay: 0.6s">
+                    <div>
+                        <h4 class="font-headline-sm text-lg text-on-background mb-2">Random Forest</h4>
+                        <p class="text-on-surface-variant text-body-md mb-4 text-sm leading-relaxed">Bagging ensemble averaging multiple decision trees. Highly robust, avoids overfitting.</p>
+                    </div>
+                    <div class="border-t border-outline-variant/30 pt-4 space-y-2 text-sm">
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Train Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['Random Forest']['train'] * 100) }}</span></div>
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Test Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['Random Forest']['test'] * 100) }}</span></div>
+                    </div>
+                </div>
+                <!-- KNN -->
+                <div class="glass-card p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform shadow-md stagger-in" style="animation-delay: 0.65s">
+                    <div>
+                        <h4 class="font-headline-sm text-lg text-on-background mb-2">KNN Classifier</h4>
+                        <p class="text-on-surface-variant text-body-md mb-4 text-sm leading-relaxed">Instance-based learning matching applicants against 5 nearest neighbors in multi-space.</p>
+                    </div>
+                    <div class="border-t border-outline-variant/30 pt-4 space-y-2 text-sm">
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Train Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['KNN']['train'] * 100) }}</span></div>
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Test Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['KNN']['test'] * 100) }}</span></div>
+                    </div>
+                </div>
+                <!-- XGBoost -->
+                <div class="glass-card p-6 rounded-3xl flex flex-col justify-between hover:scale-[1.02] transition-transform shadow-md border-primary/30 border stagger-in" style="animation-delay: 0.7s">
+                    <div>
+                        <h4 class="font-headline-sm text-lg text-primary mb-2 flex items-center gap-2">XGBoost <span class="text-xs bg-primary/10 px-2 py-0.5 rounded text-primary">Best</span></h4>
+                        <p class="text-on-surface-variant text-body-md mb-4 text-sm leading-relaxed">Gradient boosting trees with advanced regularizations. Best accuracy for sparse datasets.</p>
+                    </div>
+                    <div class="border-t border-primary/20 pt-4 space-y-2 text-sm">
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Train Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['XGBoost']['train'] * 100) }}</span></div>
+                        <div class="flex justify-between"><span class="text-on-surface-variant">Test Acc:</span><span class="font-bold text-primary">{{ "{:.2f}%".format(accuracies['XGBoost']['test'] * 100) }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Best Model Spotlight Card -->
+        <section class="mb-stack-xl">
+            <div class="spotlight-card rounded-[32px] p-8 md:p-12 stagger-in" style="animation-delay: 0.75s">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    <div class="md:col-span-2 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+                            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                            <span class="text-primary font-label-md uppercase tracking-wider text-xs">Production Engine Model</span>
+                        </div>
+                        <h3 class="font-display-lg text-headline-sm md:text-headline-md font-bold text-on-background">Extreme Gradient Boosting (XGBoost)</h3>
+                        <p class="text-on-surface-variant text-body-md leading-relaxed">
+                            XGBoost operates by sequentially adding weak decision tree estimators where each new tree corrects errors made by prior models. Its training process handles missing values implicitly and contains objective regularizations (L1 and L2 weight penalties) to prevent model overfitting.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 pt-4">
+                            <div class="bg-white/40 p-4 rounded-2xl border border-white/50">
+                                <p class="text-xs text-on-surface-variant">XGBoost Test Accuracy</p>
+                                <p class="text-2xl font-bold text-primary">{{ "{:.2f}%".format(accuracies['XGBoost']['test'] * 100) }}</p>
+                            </div>
+                            <div class="bg-white/40 p-4 rounded-2xl border border-white/50">
+                                <p class="text-xs text-on-surface-variant">Production Status</p>
+                                <p class="text-2xl font-bold text-green-600 flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-green-500 animate-ping inline-block"></span> Active</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-6 bg-white/50 rounded-3xl border border-white/60">
+                        <span class="material-symbols-outlined text-primary text-[80px] mb-4">bolt</span>
+                        <p class="font-bold text-center text-on-background">Robust Execution</p>
+                        <p class="text-xs text-on-surface-variant text-center mt-1">Average inference time: ~20ms</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Visual Analytics Grid -->
+        <section class="mb-stack-xl">
+            <h2 class="font-headline-md text-headline-md text-on-background mb-6 stagger-in" style="animation-delay: 0.8s">Visual Data Analytics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 1. Loan Status Dist -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 0.85s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">1. Loan Status Distribution</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/loan_status_dist.png" onclick="showLightbox(this.src, 'Loan Status Distribution')" alt="Loan Status Distribution">
+                    </div>
+                </div>
+                <!-- 2. Gender Dist -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 0.9s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">2. Loan Status by Gender</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/gender_dist.png" onclick="showLightbox(this.src, 'Loan Status by Gender')" alt="Loan Status by Gender">
+                    </div>
+                </div>
+                <!-- 3. Property Area Dist -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 0.95s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">3. Loan Status by Property Area</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/property_area_dist.png" onclick="showLightbox(this.src, 'Loan Status by Property Area')" alt="Loan Status by Property Area">
+                    </div>
+                </div>
+                <!-- 4. Correlation Heatmap -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 1.0s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">4. Correlation Heatmap</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/correlation_heatmap.png" onclick="showLightbox(this.src, 'Feature Correlation Matrix')" alt="Correlation Heatmap">
+                    </div>
+                </div>
+                <!-- 5. Applicant Income Dist -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 1.05s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">5. Applicant Income Distribution</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/applicant_income_dist.png" onclick="showLightbox(this.src, 'Applicant Income Distribution')" alt="Applicant Income Distribution">
+                    </div>
+                </div>
+                <!-- 6. Accuracy Comparison -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 1.1s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">6. Model Accuracy Comparison</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/accuracy_comparison.png" onclick="showLightbox(this.src, 'Model Testing Accuracy Comparison')" alt="Accuracy Comparison">
+                    </div>
+                </div>
+                <!-- 7. Confusion Matrix -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 1.15s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">7. Confusion Matrix (XGBoost)</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/confusion_matrix.png" onclick="showLightbox(this.src, 'Confusion Matrix Heatmap')" alt="Confusion Matrix">
+                    </div>
+                </div>
+                <!-- 8. Feature Importance -->
+                <div class="glass-card rounded-3xl p-6 hover:scale-[1.01] transition-all duration-300 shadow-md stagger-in" style="animation-delay: 1.2s">
+                    <h3 class="font-headline-sm text-base mb-4 text-on-background">8. XGBoost Feature Importance</h3>
+                    <div class="bg-white rounded-2xl p-4 overflow-hidden border border-outline-variant/30">
+                        <img class="w-full h-auto max-h-[300px] object-contain hover:scale-[1.05] transition-transform duration-500 cursor-zoom-in" src="/static/images/charts/feature_importance.png" onclick="showLightbox(this.src, 'Model Feature Importance Graph')" alt="Feature Importance">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 bg-black/85 z-50 hidden flex flex-col items-center justify-center p-4" onclick="hideLightbox()">
+        <button class="absolute top-6 right-6 text-white text-4xl font-bold cursor-pointer hover:text-primary transition-colors">&times;</button>
+        <h4 id="lightbox-title" class="text-white text-xl font-bold mb-4">Chart</h4>
+        <img id="lightbox-img" class="max-w-full max-h-[80vh] object-contain rounded-xl border border-white/10" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Zoomed Chart">
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-surface-container-low dark:bg-on-background w-full py-stack-xl mt-12">
+        <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center">
+            <div>
+                <span class="font-headline-sm text-headline-sm font-bold text-primary">Smart Lender</span>
+                <p class="font-label-md text-label-md text-on-surface-variant mt-4">
+                    © 2026 Smart Lender AI. Enlightened Finance for Everyone.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-x-8 gap-y-4 md:justify-end">
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Stats count-up animation
+        function animateCounter(id, target) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let current = 0;
+            const duration = 1200; // 1.2s
+            const stepTime = 15;
+            const steps = duration / stepTime;
+            const increment = target / steps;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    el.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(current);
+                }
+            }, stepTime);
+        }
+
+        // Lightbox Functions
+        function showLightbox(src, title) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-title').textContent = title;
+            document.getElementById('lightbox').classList.remove('hidden');
+        }
+
+        function hideLightbox() {
+            document.getElementById('lightbox').classList.add('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const records = parseInt(body.getAttribute('data-records') || '0');
+            const features = parseInt(body.getAttribute('data-features') || '0');
+            const approved = parseInt(body.getAttribute('data-approved') || '0');
+            const rejected = parseInt(body.getAttribute('data-rejected') || '0');
+
+            // Animate counters
+            animateCounter('stat-records', records);
+            animateCounter('stat-features', features);
+            animateCounter('stat-approved', approved);
+            animateCounter('stat-rejected', rejected);
+        });
+    </script>
+</body>
+
+</html>

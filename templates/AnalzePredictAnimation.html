@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Smart Lender | Analyzing Profile</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed": "#341100",
+                        "on-tertiary-container": "#ffdecf",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-container": "#aa4900",
+                        "inverse-primary": "#d2bbff",
+                        "surface": "#f7f9fb",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-background": "#191c1e",
+                        "on-primary-container": "#ede0ff",
+                        "primary-container": "#7c3aed",
+                        "tertiary-fixed-dim": "#ffb690",
+                        "primary-fixed": "#eaddff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#ccc3d8",
+                        "background": "#f7f9fb",
+                        "on-surface-variant": "#4a4455",
+                        "on-surface": "#191c1e",
+                        "on-secondary-fixed-variant": "#6800b4",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#25005a",
+                        "secondary": "#831ada",
+                        "surface-dim": "#d8dadc",
+                        "inverse-surface": "#2d3133",
+                        "surface-tint": "#732ee4",
+                        "on-tertiary-fixed-variant": "#783200",
+                        "on-secondary-container": "#fffbff",
+                        "tertiary": "#843700",
+                        "secondary-container": "#9e41f5",
+                        "on-secondary-fixed": "#2c0051",
+                        "secondary-fixed": "#f0dbff",
+                        "inverse-on-surface": "#eff1f3",
+                        "outline": "#7b7487",
+                        "primary": "#630ed4",
+                        "secondary-fixed-dim": "#ddb8ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed": "#ffdbca",
+                        "surface-container": "#eceef0",
+                        "primary-fixed-dim": "#d2bbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-xl": "64px",
+                        "stack-md": "16px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "stack-lg": "32px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes rotate-gauge {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-gauge {
+            animation: rotate-gauge 2s linear infinite;
+        }
+
+        .step-inactive {
+            opacity: 0.4;
+            transform: translateY(4px);
+        }
+
+        .step-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s ease-out;
+        }
+
+        .check-hidden {
+            scale: 0;
+            opacity: 0;
+        }
+
+        .check-visible {
+            scale: 1;
+            opacity: 1;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px -12px rgba(99, 14, 212, 0.1), 0 0 40px rgba(124, 58, 237, 0.05);
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #630ed4, #9e41f5, #630ed4);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: 200% center;
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full w-full bg-background overflow-hidden font-body-md text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <!-- Gradient Background -->
+    <div
+        class="fixed inset-0 z-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary-fixed/30 via-white to-surface">
+    </div>
+    
+    <!-- Main Content Container -->
+    <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-margin-mobile md:px-margin-desktop">
+        <!-- Header / Logo -->
+        <div class="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 mb-stack-xl cursor-pointer" onclick="window.location.href='/'">
+            <span class="material-symbols-outlined text-primary text-3xl"
+                style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+            <h1 class="font-display-lg text-headline-sm font-extrabold tracking-tight text-on-background">
+                Smart Lender
+            </h1>
+        </div>
+
+        <!-- Central Analyzing Card -->
+        <div class="glass-card w-full max-w-[480px] rounded-[32px] p-stack-lg md:p-stack-xl flex flex-col items-center text-center">
+            <!-- Progress Gauge -->
+            <div class="relative w-32 h-32 mb-stack-lg">
+                <svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+                    <!-- Background Track -->
+                    <circle class="text-primary/10" cx="50" cy="50" fill="transparent" r="44" stroke="currentColor"
+                        stroke-width="4"></circle>
+                    <!-- Animated Gradient Stroke -->
+                    <defs>
+                        <linearGradient id="gaugeGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                            <stop offset="0%" stop-color="#630ed4"></stop>
+                            <stop offset="100%" stop-color="#9e41f5"></stop>
+                        </linearGradient>
+                    </defs>
+                    <circle class="transition-all duration-300 ease-out" cx="50" cy="50" fill="transparent"
+                        id="progressCircle" r="44" stroke="url(#gaugeGradient)" stroke-dasharray="276"
+                        stroke-dashoffset="276" stroke-linecap="round" stroke-width="6"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="font-display-lg text-headline-md text-primary font-bold" id="percentText">0%</span>
+                </div>
+            </div>
+            <!-- Title Section -->
+            <div class="flex items-center gap-2 mb-stack-sm">
+                <span class="material-symbols-outlined text-primary animate-pulse"
+                    style="font-variation-settings: 'FILL' 1;">temp_preferences_custom</span>
+                <h2 class="font-display-lg text-headline-sm font-bold shimmer-text">Analyzing Profile</h2>
+            </div>
+            <p class="font-body-md text-on-surface-variant mb-stack-xl max-w-[320px]">
+                Our AI decision model is evaluating your loan eligibility criteria and risk profile in real-time.
+            </p>
+            <!-- Validation Steps -->
+            <div class="w-full space-y-4 text-left px-4">
+                <div class="step-item step-inactive flex items-center justify-between" id="step-1">
+                    <span class="text-on-surface font-label-md">Initializing Prediction Engine...</span>
+                    <span class="material-symbols-outlined text-primary check-hidden" id="check-1">check_circle</span>
+                </div>
+                <div class="step-item step-inactive flex items-center justify-between" id="step-2">
+                    <span class="text-on-surface font-label-md">Validating Applicant Information...</span>
+                    <span class="material-symbols-outlined text-primary check-hidden" id="check-2">check_circle</span>
+                </div>
+                <div class="step-item step-inactive flex items-center justify-between" id="step-3">
+                    <span class="text-on-surface font-label-md">Encoding Features...</span>
+                    <span class="material-symbols-outlined text-primary check-hidden" id="check-3">check_circle</span>
+                </div>
+                <div class="step-item step-inactive flex items-center justify-between" id="step-4">
+                    <span class="text-on-surface font-label-md">Loading Best-Fit Model...</span>
+                    <span class="material-symbols-outlined text-primary check-hidden" id="check-4">check_circle</span>
+                </div>
+                <div class="step-item step-inactive flex items-center justify-between" id="step-5">
+                    <span class="text-on-surface font-label-md">Evaluating Credit Risk...</span>
+                    <span class="material-symbols-outlined text-primary check-hidden" id="check-5">check_circle</span>
+                </div>
+                <div class="step-item step-inactive flex items-center justify-between" id="step-6">
+                    <span class="text-on-surface font-label-md">Generating Decision...</span>
+                    <span class="material-symbols-outlined text-primary check-hidden" id="check-6">check_circle</span>
+                </div>
+            </div>
+        </div>
+        <!-- Countdown Footer -->
+        <div class="mt-stack-lg text-center">
+            <p class="font-label-md text-on-surface-variant/60 tracking-widest uppercase flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                Processing Vector Pipeline
+            </p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressCircle = document.getElementById('progressCircle');
+            const percentText = document.getElementById('percentText');
+            const totalSteps = 6;
+            const totalDuration = 2400; // 2.4 seconds total animation
+            const intervalTime = 30; // 30ms updates
+            let elapsed = 0;
+            
+            // SVG Circumference is 2 * PI * 44 = ~276.46
+            const circumference = 276;
+            progressCircle.style.strokeDashoffset = circumference;
+            
+            const steps = [
+                { id: 'step-1', check: 'check-1', time: 400 },
+                { id: 'step-2', check: 'check-2', time: 800 },
+                { id: 'step-3', check: 'check-3', time: 1200 },
+                { id: 'step-4', check: 'check-4', time: 1600 },
+                { id: 'step-5', check: 'check-5', time: 2000 },
+                { id: 'step-6', check: 'check-6', time: 2400 }
+            ];
+            
+            // Set first step active initially
+            document.getElementById('step-1').className = "step-item step-active flex items-center justify-between";
+            
+            const timer = setInterval(() => {
+                elapsed += intervalTime;
+                const progress = Math.min(elapsed / totalDuration, 1);
+                const percent = Math.floor(progress * 100);
+                
+                percentText.textContent = `${percent}%`;
+                progressCircle.style.strokeDashoffset = circumference - (progress * circumference);
+                
+                steps.forEach((step, idx) => {
+                    const stepEl = document.getElementById(step.id);
+                    const checkEl = document.getElementById(step.check);
+                    
+                    if (elapsed >= step.time) {
+                        // Complete current step
+                        stepEl.className = "step-item step-active flex items-center justify-between text-primary font-bold";
+                        checkEl.className = "material-symbols-outlined text-primary check-visible";
+                        
+                        // Activate next step
+                        if (idx + 1 < totalSteps) {
+                            const nextStepEl = document.getElementById(steps[idx + 1].id);
+                            nextStepEl.className = "step-item step-active flex items-center justify-between";
+                        }
+                    }
+                });
+                
+                if (progress >= 1) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        window.location.href = '/results';
+                    }, 200);
+                }
+            }, intervalTime);
+        });
+    </script>
+</body>
+
+</html>

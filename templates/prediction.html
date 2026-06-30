@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Prediction Results | Smart Lender</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <!-- html2pdf removed: using native window.print() for reliable PDF output -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f2f4f6",
+                        "secondary": "#831ada",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "primary-fixed": "#eaddff",
+                        "inverse-primary": "#d2bbff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-tint": "#732ee4",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed-dim": "#ffb690",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffdecf",
+                        "on-secondary-container": "#fffbff",
+                        "background": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#f0dbff",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-secondary-fixed": "#2c0051",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#aa4900",
+                        "secondary-container": "#9e41f5",
+                        "on-primary-fixed": "#25005a",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#ddb8ff",
+                        "surface-dim": "#d8dadc",
+                        "on-tertiary-fixed": "#341100",
+                        "tertiary-fixed": "#ffdbca",
+                        "on-tertiary-fixed-variant": "#783200",
+                        "primary-container": "#7c3aed",
+                        "on-surface-variant": "#4a4455",
+                        "on-secondary-fixed-variant": "#6800b4",
+                        "outline": "#7b7487",
+                        "on-primary-container": "#ede0ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#d2bbff",
+                        "surface-bright": "#f7f9fb",
+                        "outline-variant": "#ccc3d8",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "tertiary": "#843700",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "primary": "#630ed4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "stack-xl": "64px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            color: #191c1e;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            z-index: 0;
+            animation: confetti-fall linear infinite;
+        }
+
+        @keyframes pulse-soft {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse-soft 3s ease-in-out infinite;
+        }
+
+        @keyframes count-up {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: count-up 0.6s ease-out forwards;
+        }
+
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .shimmer:hover::after {
+            left: 120%;
+        }
+
+        .gauge-ring {
+            stroke-dasharray: 534;
+            /* 2 * PI * 85 (approx) */
+            stroke-dashoffset: 534;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-bar-fill {
+            width: 0;
+            transition: width 1.5s ease-out;
+        }
+
+        /* PDF print-specific styles to avoid linter warnings inside style attributes */
+        .pdf-status-approved {
+            border: 1px solid #a7f3d0 !important;
+            background-color: #f0fdf4 !important;
+        }
+        .pdf-status-rejected {
+            border: 1px solid #fecaca !important;
+            background-color: #fef2f2 !important;
+        }
+        .pdf-text-approved {
+            color: #047857 !important;
+        }
+        .pdf-text-rejected {
+            color: #b91c1c !important;
+        }
+        .pdf-text-approved-dark {
+            color: #059669 !important;
+        }
+        .pdf-text-rejected-dark {
+            color: #dc2626 !important;
+        }
+        .pdf-reason-positive {
+            color: #10b981 !important;
+        }
+        .pdf-reason-negative {
+            color: #ef4444 !important;
+        }
+        .pdf-stroke-primary {
+            stroke: #4f46e5 !important;
+        }
+        .pdf-stroke-error {
+            stroke: #ef4444 !important;
+        }
+
+        /* ===== PRINT / PDF STYLES ===== */
+        @media print {
+            /* Hide everything on the page */
+            body > * { display: none !important; }
+
+            /* Show only the report template */
+            #report-pdf-template {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                box-shadow: none !important;
+                border: none !important;
+                font-family: 'Inter', Arial, sans-serif !important;
+                color: #1e293b !important;
+                background: #ffffff !important;
+            }
+
+            /* Print page settings */
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen relative overflow-x-hidden"
+      data-score="{{ score }}"
+      data-target-width="{% if loan_status == 'Approved' %}{% if risk_level == 'Low Risk' %}15%{% else %}45%{% endif %}{% else %}85%{% endif %}">
+    <!-- TopNavBar -->
+    <nav
+        class="fixed top-0 w-full z-50 bg-white/60 dark:bg-on-background/60 backdrop-blur-xl border-b border-white/40 dark:border-white/10 shadow-[0_8px_32px_0_rgba(124,58,237,0.1)] h-20">
+        <div class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-full">
+            <div class="flex items-center gap-2 group cursor-pointer" onclick="window.location.href='/'">
+                <span class="material-symbols-outlined text-primary text-3xl"
+                    style="font-variation-settings: 'FILL' 1;">analytics</span>
+                <span class="font-headline-sm text-headline-sm font-bold text-primary">Smart Lender</span>
+            </div>
+            <div class="hidden md:flex items-center space-gap-stack-lg gap-8">
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="/">Home</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="/#features">Features</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="/dashboard">Dashboard</a>
+            </div>
+            <a href="/eligibility"
+                class="bg-primary-container text-on-primary-container px-6 py-2 rounded-xl font-label-md text-label-md active:scale-95 transition-transform shimmer flex items-center justify-center text-center">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Canvas -->
+    <main class="pt-32 pb-stack-xl max-w-container-max mx-auto px-margin-desktop" id="report-container">
+        <!-- Header -->
+        <header class="text-center mb-stack-lg stagger-in" style="animation-delay: 0.1s">
+            <h1 class="font-display-lg text-display-lg text-on-background mb-4">Your Eligibility Results</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                Our XGBoost AI decision engine has analyzed your profile against historical loan portfolios to generate this decision.
+            </p>
+        </header>
+
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            
+            <!-- Prediction Result Card (Main) -->
+            <div class="lg:col-span-8 glass rounded-3xl p-stack-lg relative overflow-hidden flex flex-col justify-center items-center stagger-in"
+                style="animation-delay: 0.2s">
+                
+                <!-- Confetti Container (For Approved State) -->
+                {% if loan_status == 'Approved' %}
+                <div class="absolute inset-0 pointer-events-none" id="confetti-container"></div>
+                {% endif %}
+                
+                <div class="relative z-10 text-center">
+                    {% if loan_status == 'Approved' %}
+                    <div class="inline-flex items-center justify-center p-4 rounded-full bg-green-100 text-green-600 mb-stack-md pulse-animation">
+                        <span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+                    </div>
+                    <h2 class="font-display-lg text-display-lg text-green-600 mb-2">Approved</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant">Congratulations! Your financial profile qualifies for the loan.</p>
+                    {% else %}
+                    <div class="inline-flex items-center justify-center p-4 rounded-full bg-red-100 text-red-600 mb-stack-md pulse-animation">
+                        <span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">cancel</span>
+                    </div>
+                    <h2 class="font-display-lg text-display-lg text-red-600 mb-2">Not Approved</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant">Regrettably, your profile does not meet our lending guidelines at this time.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Eligibility Score Meter -->
+            <div class="lg:col-span-4 glass rounded-3xl p-stack-lg flex flex-col items-center justify-center stagger-in"
+                style="animation-delay: 0.3s">
+                <h3 class="font-headline-sm text-headline-sm text-on-background mb-stack-md">AI Score</h3>
+                <div class="relative w-48 h-48">
+                    <svg class="w-full h-full transform -rotate-90">
+                        <circle class="text-surface-container-highest" cx="96" cy="96" fill="transparent" r="85"
+                            stroke="currentColor" stroke-width="12"></circle>
+                        <circle class="{% if loan_status == 'Approved' %}text-primary{% else %}text-red-500{% endif %} gauge-ring" cx="96" cy="96" fill="transparent" id="score-ring"
+                            r="85" stroke="currentColor" stroke-linecap="round" stroke-width="12"
+                            style="stroke-dashoffset: 534;"></circle>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="font-display-lg text-display-lg text-on-background" id="score-text">0</span>
+                        <span class="font-label-md text-label-md text-on-surface-variant">out of 100</span>
+                    </div>
+                </div>
+                <div class="mt-stack-md flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-sm">info</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Based on model probabilities</span>
+                </div>
+                <div class="mt-6 pt-6 border-t border-white/40 w-full">
+                    <div class="grid grid-cols-2 gap-y-3 gap-x-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-primary"></div>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">75–100: High approval</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">60–74: Moderate risk</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-error-container"></div>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">Below 60: High risk</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="lg:col-span-4 glass rounded-3xl p-stack-lg stagger-in" style="animation-delay: 0.4s">
+                <div class="flex justify-between items-center mb-stack-md">
+                    <h3 class="font-headline-sm text-headline-sm text-on-background">Risk Level</h3>
+                    <span
+                        class="px-3 py-1 rounded-full font-label-sm text-label-sm uppercase tracking-wider 
+                        {% if risk_level == 'Low Risk' %}bg-green-100 text-green-700
+                        {% elif risk_level == 'Moderate Risk' %}bg-yellow-100 text-yellow-700
+                        {% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ risk_level }}
+                    </span>
+                </div>
+                <div class="space-y-stack-md">
+                    <div class="h-4 bg-surface-container-highest rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r {% if loan_status == 'Approved' %}from-green-400 to-primary{% else %}from-red-400 to-red-600{% endif %} progress-bar-fill"
+                            id="risk-progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        {{ risk_desc }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- EMI Summary -->
+            <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-stack-md stagger-in"
+                style="animation-delay: 0.5s">
+                <div class="glass rounded-2xl p-6 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface-variant mb-2">Monthly EMI</span>
+                    <span class="font-headline-md text-headline-md text-primary">₹{{ "{:,.2f}".format(emi) }}</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant mt-auto italic">Fixed for {{ term_months }} months</span>
+                </div>
+                <div class="glass rounded-2xl p-6 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface-variant mb-2">Total Interest</span>
+                    <span class="font-headline-md text-headline-md text-on-background">₹{{ "{:,.2f}".format(total_interest) }}</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant mt-auto">Estimated 8% APR</span>
+                </div>
+                <div class="glass rounded-2xl p-6 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface-variant mb-2">Total Payable</span>
+                    <span class="font-headline-md text-headline-md text-on-background">₹{{ "{:,.2f}".format(total_payable) }}</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant mt-auto">Principal + Interest</span>
+                </div>
+            </div>
+
+            <!-- Explainable AI -->
+            <div class="lg:col-span-6 glass rounded-3xl p-stack-lg stagger-in" style="animation-delay: 0.6s">
+                <h3 class="font-headline-sm text-headline-sm text-on-background mb-stack-md">Why this Decision?</h3>
+                <ul class="space-y-4">
+                    {% for reason in explainable_reasons %}
+                    <li class="flex items-start gap-4">
+                        <div class="{% if reason.positive %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} p-2 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">
+                                {% if reason.positive %}check_circle{% else %}error{% endif %}
+                            </span>
+                        </div>
+                        <div>
+                            <p class="font-label-md text-label-md text-on-background">{{ reason.title }}</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">{{ reason.desc }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Personalized Suggestions -->
+            <div class="lg:col-span-6 glass rounded-3xl p-stack-lg stagger-in" style="animation-delay: 0.7s">
+                <h3 class="font-headline-sm text-headline-sm text-on-background mb-stack-md">AI Optimization Insights</h3>
+                <div class="space-y-stack-md">
+                    {% for sugg in suggestions %}
+                    <div class="bg-surface-container-low p-5 rounded-2xl border border-white/40 flex items-center gap-4 hover:bg-white transition-colors cursor-pointer group">
+                        <div class="p-3 {% if sugg.action == 'positive' %}bg-green-500{% else %}bg-purple-500{% endif %} rounded-xl group-hover:scale-110 transition-transform text-white">
+                            <span class="material-symbols-outlined">{{ sugg.icon }}</span>
+                        </div>
+                        <div>
+                            <p class="font-label-md text-label-md text-on-background">{{ sugg.title }}</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">{{ sugg.desc }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-stack-lg" id="download-btn-container">
+                    <button id="download-btn" onclick="downloadPDF()"
+                        class="w-full h-14 bg-gradient-to-r from-primary-container to-secondary-container text-white rounded-xl font-label-md text-label-md shadow-lg shadow-primary/20 shimmer flex items-center justify-center gap-3 active:scale-[0.98] transition-transform">
+                        <span class="material-symbols-outlined">picture_as_pdf</span>
+                        Download Eligibility Report PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-surface-container-low dark:bg-on-background w-full py-stack-xl mt-12">
+        <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center">
+            <div>
+                <span class="font-headline-sm text-headline-sm font-bold text-primary">Smart Lender</span>
+                <p class="font-label-md text-label-md text-on-surface-variant mt-4">
+                    © 2026 Smart Lender AI. Enlightened Finance for Everyone.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-x-8 gap-y-4 md:justify-end">
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Confetti Generator
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            if(!container) return;
+            const colors = ['#7C3AED', '#630ed4', '#831ada', '#d2bbff', '#fff'];
+
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationDelay = (Math.random() * 2) + 's';
+                confetti.style.opacity = Math.random();
+                container.appendChild(confetti);
+            }
+        }
+
+        // Score Counter and Gauge Animation
+        function animateScore() {
+            const scoreElement = document.getElementById('score-text');
+            const ring = document.getElementById('score-ring');
+            const targetScore = parseInt(document.body.getAttribute('data-score') || '0');
+            let currentScore = 0;
+
+            const duration = 1200; // 1.2 seconds
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Easing function
+                const easeOutQuad = t => t * (2 - t);
+                const easedProgress = easeOutQuad(progress);
+
+                currentScore = Math.floor(easedProgress * targetScore);
+                scoreElement.textContent = currentScore;
+
+                // Gauge Offset
+                const maxOffset = 534; // Circumference (2 * PI * 85)
+                const offset = maxOffset - (easedProgress * (targetScore / 100) * maxOffset);
+                ring.style.strokeDashoffset = offset;
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // PDF download using native browser print (100% reliable, no html2canvas)
+        function downloadPDF() {
+            // Set date
+            document.getElementById('pdf-date').textContent = new Date().toLocaleDateString('en-IN', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+            // Trigger browser print dialog (user saves as PDF)
+            window.print();
+        }
+
+        // Initialize animations on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof createConfetti === 'function') createConfetti();
+            setTimeout(animateScore, 200);
+
+            // Trigger progress bar animation
+            setTimeout(() => {
+                const bar = document.getElementById('risk-progress-bar');
+                if (bar) {
+                    // Approved results show low/moderate risk (lower bar is better)
+                    // Rejected results show high risk (higher bar)
+                    const targetWidth = document.body.getAttribute('data-target-width') || '0%';
+                    bar.style.width = targetWidth;
+                }
+            }, 500);
+        });
+    </script>
+
+    <!-- Hidden PDF Report Template (Crisp, Premium Bank Styling) -->
+    <div id="report-pdf-template" style="display: none; width: 750px; background: #ffffff; color: #1e293b; padding: 24px; box-sizing: border-box; margin: 0 auto;" class="bg-white font-sans">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b-2 border-indigo-600 pb-3 mb-4" style="border-bottom: 2px solid #4f46e5; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="text-2xl font-extrabold text-indigo-700 tracking-tight" style="color: #4338ca; margin: 0; font-size: 24px; font-weight: 800;">SMART LENDER</h1>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1" style="margin: 0; font-size: 10px; color: #64748b; font-weight: 600;">AI Loan Assessment Report</p>
+            </div>
+            <div class="text-right" style="text-align: right;">
+                <p class="text-[10px] text-slate-400" style="margin: 0; font-size: 10px; color: #94a3b8;">Report ID: SL-{{ "{:04d}".format(score) }}-{{ term_months }}</p>
+                <p class="text-[10px] text-slate-400" style="margin: 0; font-size: 10px; color: #94a3b8;">Date: <span id="pdf-date"></span></p>
+            </div>
+        </div>
+
+        <!-- Status Summary Section -->
+        <div class="grid grid-cols-3 gap-4 mb-4" style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div class="p-4 rounded-xl border flex flex-col justify-center {% if loan_status == 'Approved' %}pdf-status-approved{% else %}pdf-status-rejected{% endif %}" style="padding: 16px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center;">
+                <span class="text-[10px] text-slate-500 uppercase tracking-wider mb-1 font-bold" style="font-size: 9px; color: #64748b; font-weight: 700;">Eligibility Decision</span>
+                <span class="text-xl font-black {% if loan_status == 'Approved' %}pdf-text-approved{% else %}pdf-text-rejected{% endif %}" style="font-size: 20px; font-weight: 900; display: block;">
+                    {% if loan_status == 'Approved' %}PRE-APPROVED{% else %}NOT APPROVED{% endif %}
+                </span>
+                <p class="text-xs text-slate-600 mt-1 font-medium" style="margin: 4px 0 0 0; font-size: 12px; color: #475569;">Risk Assessment: <span class="font-bold {% if loan_status == 'Approved' %}pdf-text-approved-dark{% else %}pdf-text-rejected-dark{% endif %}" style="font-weight: 700;">{{ risk_level }}</span></p>
+            </div>
+            <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50/20 flex flex-col items-center justify-center text-center" style="padding: 12px; border-radius: 12px; border: 1px solid #c7d2fe; background-color: #f5f7ff; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span class="text-[10px] text-slate-500 uppercase tracking-wider mb-1 font-bold" style="font-size: 9px; color: #64748b; font-weight: 700; display: block;">AI Eligibility Score</span>
+                <span class="text-3xl font-extrabold text-indigo-700" style="font-size: 30px; font-weight: 800; color: #4338ca; line-height: 1.2; font-family: sans-serif; margin-top: 4px;">{{ score }} / 100</span>
+                <span class="text-[9px] text-slate-500 mt-1" style="font-size: 9px; color: #64748b; font-family: sans-serif; display: block; margin-top: 4px;">Confidence Rate</span>
+            </div>
+        </div>
+
+        <!-- Profile & Input Details Grid -->
+        <div class="mb-4" style="margin-bottom: 16px;">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 border-b pb-1" style="font-size: 10px; color: #94a3b8; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 8px; font-weight: 700;">1. Applicant Financial Profile</h3>
+            <div class="grid grid-cols-2 gap-y-2 gap-x-8 text-xs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 32px; font-size: 12px;">
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Applicant Monthly Income:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">₹{{ "{:,.2f}".format(applicant_income) }}</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Co-applicant Monthly Income:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">₹{{ "{:,.2f}".format(coapplicant_income) }}</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Total Monthly Income:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">₹{{ "{:,.2f}".format(applicant_income + coapplicant_income) }}</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Requested Loan Amount:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">₹{{ "{:,.2f}".format(loan_amount * 1000) }} (₹{{ loan_amount|round|int }}k)</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Repayment Loan Term:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">{{ term_months }} Months</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Credit History Score:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">{% if credit_history == 1 %}Satisfactory (Good){% else %}Unsatisfactory (Low){% endif %}</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Gender / Marital Status:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">{{ gender }} / {{ married }}</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0;">
+                    <span class="text-slate-500" style="color: #64748b;">Dependents / Education:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">{{ dependents }} / {{ education }}</span>
+                </div>
+                <div class="flex justify-between py-0.5 border-b border-slate-100" style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 2px 0; grid-column: span 2;">
+                    <span class="text-slate-500" style="color: #64748b;">Employment & Area:</span>
+                    <span class="font-semibold text-slate-800" style="color: #0f172a; font-weight: 600;">Self-Employed: {{ self_employed }} | Property Area: {{ property_area }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer & Footer -->
+        <div class="border-t pt-3 text-center text-[9px] text-slate-400 mt-6" style="border-top: 1px solid #e2e8f0; padding-top: 12px; text-align: center; font-size: 9px; color: #94a3b8; line-height: 1.4; margin-top: 24px;">
+            <p style="margin: 0;"><strong>Disclaimer:</strong> This document represents an automated algorithmic pre-screening assessment by the Smart Lender AI system.</p>
+            <p style="margin: 2px 0 0 0;">This is not a final contract or official approval from a lending institution. Calculations are mathematical estimations.</p>
+        </div>
+    </div>
+</body>
+
+</html>
