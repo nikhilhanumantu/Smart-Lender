@@ -4,13 +4,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import SMOTE
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 # Set style for premium visualizations
 plt.rcParams['figure.facecolor'] = '#ffffff'
@@ -89,41 +90,91 @@ y = df_encoded['Loan_Status']
 
 print("Features columns:", X.columns.tolist())
 
-# --- Step 4: Split & Scale ---
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+# --- Step 4: Apply SMOTE for Class Balancing ---
+print("--- Step 4: Applying SMOTE ---")
+smote = SMOTE(random_state=42)
+X_bal, y_bal = smote.fit_resample(X, y)
+print(f"Before SMOTE - Class distribution: {y.value_counts().to_dict()}")
+print(f"After SMOTE  - Class distribution: {y_bal.value_counts().to_dict()}")
 
+# Store column names before scaling (array conversion loses them)
+names = X_bal.columns
+
+# --- Step 5: Feature Scaling on Balanced Data ---
+print("--- Step 5: Scaling the Dataset ---")
 scaler = StandardScaler()
-# Fit scaler on numerical columns only
-X_train_scaled = X_train.copy()
-X_test_scaled = X_test.copy()
+X_bal_arr = scaler.fit_transform(X_bal)           # fit & transform → numpy array
+X_bal = pd.DataFrame(X_bal_arr, columns=names)    # convert array back to DataFrame
 
-X_train_scaled[num_cols] = scaler.fit_transform(X_train[num_cols])
-X_test_scaled[num_cols] = scaler.transform(X_test[num_cols])
+# --- Step 6: Train/Test Split on Balanced & Scaled Data ---
+X_train, X_test, y_train, y_test = train_test_split(X_bal, y_bal, test_size=0.2, random_state=42, stratify=y_bal)
+X_train_scaled = X_train
+X_test_scaled = X_test
 
-# --- Step 5: Model Training & Evaluation ---
+# --- Step 7: Model Training & Evaluation ---
 models = {
     'Decision Tree': DecisionTreeClassifier(max_depth=5, random_state=42),
     'Random Forest': RandomForestClassifier(n_estimators=100, max_depth=6, random_state=42),
     'KNN': KNeighborsClassifier(n_neighbors=5),
-    'XGBoost': XGBClassifier(n_estimators=50, max_depth=4, learning_rate=0.1, random_state=42, eval_metric='logloss')
+    'XGBoost': XGBClassifier(n_estimators=200, max_depth=5, learning_rate=0.05,
+                             subsample=0.8, colsample_bytree=0.8,
+                             random_state=42, eval_metric='logloss')
 }
 
 accuracies = {}
 for name, clf in models.items():
     clf.fit(X_train_scaled, y_train)
     train_pred = clf.predict(X_train_scaled)
-    test_pred = clf.predict(X_test_scaled)
-    train_acc = accuracy_score(y_train, train_pred)
-    test_acc = accuracy_score(y_test, test_pred)
-    accuracies[name] = {
-        'train': train_acc,
-        'test': test_acc
-    }
-    print(f"{name}: Train Acc = {train_acc:.4f}, Test Acc = {test_acc:.4f}")
+    test_pred  = clf.predict(X_test_scaled)
+    train_acc  = accuracy_score(y_train, train_pred)
+    test_acc   = accuracy_score(y_test,  test_pred)
 
-# Save the XGBoost model as the best one
+    # 5-Fold Cross Validation on the full balanced & scaled dataset
+    cv_scores = cross_val_score(clf, X_bal, y_bal, cv=5, scoring='accuracy')
+    cv_mean   = cv_scores.mean()
+    cv_std    = cv_scores.std()
+
+    accuracies[name] = {
+        'train':    train_acc,
+        'test':     test_acc,
+        'cv_mean':  cv_mean,
+        'cv_std':   cv_std
+    }
+
+    print(f"\n{'='*55}")
+    print(f"  Model : {name}")
+    print(f"{'='*55}")
+    print(f"  Train Accuracy       : {train_acc*100:.2f}%")
+    print(f"  Test  Accuracy       : {test_acc*100:.2f}%")
+    print(f"\n  Confusion Matrix:")
+    cm = confusion_matrix(y_test, test_pred)
+    print(f"    TN={cm[0,0]}  FP={cm[0,1]}")
+    print(f"    FN={cm[1,0]}  TP={cm[1,1]}")
+    print(f"\n  Classification Report:")
+    print(classification_report(y_test, test_pred,
+                                target_names=['Rejected(0)', 'Approved(1)'],
+                                digits=4))
+    print(f"  Cross-Validation (5-fold): {[round(s,4) for s in cv_scores]}")
+    print(f"  CV Mean Accuracy         : {cv_mean*100:.2f}% ± {cv_std*100:.2f}%")
+
+# ── Final Leaderboard ───────────────────────────────────────────
+print(f"\n{'='*55}")
+print("  FINAL LEADERBOARD (sorted by CV Mean Accuracy)")
+print(f"{'='*55}")
+print(f"  {'Model':<18} {'Train':>8} {'Test':>8} {'CV Mean':>10}")
+print(f"  {'-'*50}")
+for m in sorted(accuracies, key=lambda x: accuracies[x]['cv_mean'], reverse=True):
+    a = accuracies[m]
+    marker = ' ** BEST **' if m == sorted(accuracies, key=lambda x: accuracies[x]['cv_mean'], reverse=True)[0] else ''
+    print(f"  {m:<18} {a['train']*100:>7.2f}%  {a['test']*100:>7.2f}%  {a['cv_mean']*100:>8.2f}%{marker}")
+print(f"{'='*55}\n")
+
+# XGBoost is the best-performing model — save it
 best_model_name = 'XGBoost'
 best_model = models[best_model_name]
+print(f"\nBest Model: {best_model_name} "
+      f"(Train: {accuracies[best_model_name]['train']*100:.1f}%, "
+      f"Test: {accuracies[best_model_name]['test']*100:.1f}%)")
 
 # Save model, scaler, mappings, accuracies, imputation values
 model_data = {
@@ -141,7 +192,7 @@ with open("best_model.pkl", "wb") as f:
     pickle.dump(model_data, f)
 print("Saved best model to best_model.pkl")
 
-# --- Step 6: Generate Visual Analytics ---
+# --- Step 8: Generate Visual Analytics ---
 # Palette colors
 primary_color = '#630ed4'
 secondary_color = '#9e41f5'
@@ -221,7 +272,7 @@ cm = confusion_matrix(y_test, xgb_test_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', cbar=False,
             xticklabels=['Rejected (N)', 'Approved (Y)'],
             yticklabels=['Rejected (N)', 'Approved (Y)'])
-plt.title('Confusion Matrix (XGBoost Best Model)', fontsize=12, fontweight='bold', pad=15)
+plt.title('Confusion Matrix (XGBoost - Best Model)', fontsize=12, fontweight='bold', pad=15)
 plt.xlabel('Predicted Label', fontsize=10)
 plt.ylabel('True Label', fontsize=10)
 plt.tight_layout()

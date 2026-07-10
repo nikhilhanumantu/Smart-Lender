@@ -81,10 +81,9 @@ def predict():
         # Ensure column order matches feature_order from model_data
         input_data = input_data[model_data['feature_order']]
         
-        # Scale numerical features
-        input_scaled = input_data.copy()
-        num_cols = model_data['num_cols']
-        input_scaled[num_cols] = model_data['scaler'].transform(input_data[num_cols])
+        # Scale all features (scaler was fitted on all features after SMOTE balancing)
+        input_arr = model_data['scaler'].transform(input_data)
+        input_scaled = pd.DataFrame(input_arr, columns=model_data['feature_order'])
         
         # 4. Perform Prediction
         model = model_data['model']

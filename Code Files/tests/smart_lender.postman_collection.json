@@ -1,0 +1,413 @@
+{
+	"info": {
+		"_postman_id": "bfd8958c-c67b-4d4b-ba85-4bc2be30a1eb",
+		"name": "Smart Lender AI - API Testing Suite",
+		"description": "API Integration and Validation tests for the Smart Lender AI Flask application. Tests check page accessibility, predictions, and ML model outputs.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Home Page Access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response is HTML page\", function () {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html');",
+							"});",
+							"pm.test(\"Contains brand name Smart Lender\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Smart Lender\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Loan Eligibility Form Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contains main form element\", function () {",
+							"    pm.expect(pm.response.text()).to.include('id=\"eligibility-form\"');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/eligibility",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"eligibility"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Predict Loan Eligibility - Approved Profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response returns JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Returns success status and redirect target\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"    pm.expect(jsonData.redirect).to.eql(\"/analyzing\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "Gender",
+							"value": "Male",
+							"type": "text"
+						},
+						{
+							"key": "Married",
+							"value": "Yes",
+							"type": "text"
+						},
+						{
+							"key": "Dependents",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "Education",
+							"value": "Graduate",
+							"type": "text"
+						},
+						{
+							"key": "Self_Employed",
+							"value": "No",
+							"type": "text"
+						},
+						{
+							"key": "ApplicantIncome",
+							"value": "8500",
+							"type": "text"
+						},
+						{
+							"key": "CoapplicantIncome",
+							"value": "3500",
+							"type": "text"
+						},
+						{
+							"key": "LoanAmount",
+							"value": "120",
+							"type": "text"
+						},
+						{
+							"key": "Loan_Amount_Term",
+							"value": "360",
+							"type": "text"
+						},
+						{
+							"key": "Credit_History",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "Property_Area",
+							"value": "Semiurban",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/predict",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Verify Results (Session Dependent)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response contains prediction results layout\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Loan Status\");",
+							"    pm.expect(pm.response.text()).to.include(\"Analysis Report\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/results",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"results"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Predict Loan Eligibility - Rejected Profile (No Credit History)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response returns JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Returns success status and redirect target\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"    pm.expect(jsonData.redirect).to.eql(\"/analyzing\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "Gender",
+							"value": "Female",
+							"type": "text"
+						},
+						{
+							"key": "Married",
+							"value": "No",
+							"type": "text"
+						},
+						{
+							"key": "Dependents",
+							"value": "3+",
+							"type": "text"
+						},
+						{
+							"key": "Education",
+							"value": "Not Graduate",
+							"type": "text"
+						},
+						{
+							"key": "Self_Employed",
+							"value": "Yes",
+							"type": "text"
+						},
+						{
+							"key": "ApplicantIncome",
+							"value": "2000",
+							"type": "text"
+						},
+						{
+							"key": "CoapplicantIncome",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "LoanAmount",
+							"value": "450",
+							"type": "text"
+						},
+						{
+							"key": "Loan_Amount_Term",
+							"value": "180",
+							"type": "text"
+						},
+						{
+							"key": "Credit_History",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "Property_Area",
+							"value": "Rural",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/predict",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Analytics Dashboard Access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contains statistics data keys\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Approved Loans\");",
+							"    pm.expect(pm.response.text()).to.include(\"Model Accuracies\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dashboard",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. EDA Page Access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contains Plotly or Chart containers\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Exploratory Data Analysis\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/eda",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"eda"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:5000",
+			"type": "string"
+		}
+	]
+}
