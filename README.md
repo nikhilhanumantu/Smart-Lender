@@ -45,18 +45,21 @@ Smart Lender/
 ├── 3. Project Design Phase/         # Problem-Solution Fit, Proposed Solution, Solution Architecture
 ├── 4. Project Planning Phase/       # Project Planning and milestone roadmaps
 ├── 5. Project Development Phase/    # Project Development source directory
+│   ├── Code-Layout, Readability and Reusability.pdf
+│   ├── Coding & Solution.pdf
+│   ├── No. of Functional Features Included in the Solution.pdf
+│   └── Code Files/                  # Core application source folder
+│       ├── dataset/                     # Contains 'loan_approval_dataset.csv'
+│       ├── static/                      # CSS stylesheets, Tailwind configurations, and generated EDA charts
+│       ├── templates/                   # Flask HTML layout templates
+│       ├── tests/                       # Automated tests (Python unittest & Postman Collections)
+│       ├── app.py                       # Main Flask web application server
+│       ├── train_pipeline.py            # Model training, evaluations, SMOTE balancing, and chart export script
+│       ├── tailwind.config.js           # Tailwind CSS theme configurations
+│       └── TESTING_REPORT.md            # Execution summaries, test matrices, and QA logs
 ├── 6. Project Testing/              # Performance/QA testing templates and plans
 ├── 7. Project Documentation/        # Sample documentation and executable layout files
-├── 8. Project Demonstration/        # Presentations, demo schedules, and scalability plans
-└── Code Files/                      # Core application source folder
-    ├── dataset/                     # Contains 'loan_approval_dataset.csv'
-    ├── static/                      # CSS stylesheets, Tailwind configurations, and generated EDA charts
-    ├── templates/                   # Flask HTML layout templates
-    ├── tests/                       # Automated tests (Python unittest & Postman Collections)
-    ├── app.py                       # Main Flask web application server
-    ├── train_pipeline.py            # Model training, evaluations, SMOTE balancing, and chart export script
-    ├── tailwind.config.js           # Tailwind CSS theme configurations
-    └── TESTING_REPORT.md            # Execution summaries, test matrices, and QA logs
+└── 8. Project Demonstration/        # Presentations, demo schedules, and scalability plans
 ```
 
 ---
@@ -71,7 +74,7 @@ Run the following commands in your terminal:
 ```bash
 # Clone the repository (if not already done)
 git clone https://github.com/nikhilhanumantu/Smart-Lender.git
-cd Smart-Lender/Code\ Files
+cd Smart-Lender/5.\ Project\ Development\ Phase/Code\ Files
 
 # Create virtual environment
 python -m venv venv
@@ -105,7 +108,7 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your web browser.
 
 ## 🧪 Testing Framework
 
-The platform implements a multi-layered testing workflow to guarantee application safety and scalability. Detailed logs are available in [TESTING_REPORT.md](file:///c:/Users/Dell/OneDrive/Desktop/Smart%20Lender/Code%20Files/TESTING_REPORT.md).
+The platform implements a multi-layered testing workflow to guarantee application safety and scalability. Detailed logs are available in [TESTING_REPORT.md](file:///c:/Users/Dell/OneDrive/Desktop/Smart%20Lender/5.%20Project%20Development%20Phase/Code%20Files/TESTING_REPORT.md).
 
 ### 1. Backend Integration Tests
 Executes the Flask router assertions, validation checks, session controls, and predict handlers:
